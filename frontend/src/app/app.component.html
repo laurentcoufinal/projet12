@@ -1,0 +1,159 @@
+<main class="page">
+  <header class="hero">
+    <p class="eyebrow">Démo pédagogique</p>
+    <h1>{{ title }}</h1>
+    <p class="lead">
+      Comparez une connexion
+      <strong>STOMP directe</strong> vers RabbitMQ et un
+      <strong>bridge WebSocket</strong> vers Kafka.
+    </p>
+  </header>
+
+  <nav class="tabs" aria-label="Broker">
+    <button
+      type="button"
+      [class.active]="tab === 'rabbit'"
+      (click)="selectTab('rabbit')"
+    >
+      RabbitMQ (STOMP)
+    </button>
+    <button
+      type="button"
+      [class.active]="tab === 'kafka'"
+      (click)="selectTab('kafka')"
+    >
+      Kafka (gateway)
+    </button>
+  </nav>
+
+  @if (tab === 'rabbit') {
+    <section class="panel">
+      <p class="note">
+        Angular parle directement à RabbitMQ via
+        <code>{{ rabbitWs }}</code> (plugin web-stomp), file
+        <code>{{ rabbitQueue }}</code>.
+      </p>
+      <div class="status-row">
+        <span class="dot" [attr.data-status]="rabbitStatus"></span>
+        <strong>{{ statusLabel(rabbitStatus) }}</strong>
+        <span class="hint">{{ rabbitWs }}</span>
+      </div>
+      <div class="actions">
+        <button
+          type="button"
+          (click)="connectRabbit()"
+          [disabled]="rabbitStatus === 'connected' || rabbitStatus === 'connecting'"
+        >
+          Connecter
+        </button>
+        <button
+          type="button"
+          class="ghost"
+          (click)="disconnectRabbit()"
+          [disabled]="rabbitStatus === 'disconnected'"
+        >
+          Déconnecter
+        </button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Publier (RabbitMQ)</h2>
+      <form class="compose" (ngSubmit)="sendRabbit()">
+        <input
+          type="text"
+          name="rabbitDraft"
+          [(ngModel)]="rabbitDraft"
+          placeholder="Texte à envoyer sur RabbitMQ…"
+          autocomplete="off"
+        />
+        <button
+          type="submit"
+          [disabled]="rabbitStatus !== 'connected' || !rabbitDraft.trim()"
+        >
+          Envoyer
+        </button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>Messages reçus (STOMP)</h2>
+      @if (rabbitMessages.length === 0) {
+        <p class="empty">Aucun message. Connectez-vous et publiez.</p>
+      } @else {
+        <ul class="feed">
+          @for (msg of rabbitMessages; track $index) {
+            <li>
+              <pre>{{ formatJson(msg) }}</pre>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  }
+
+  @if (tab === 'kafka') {
+    <section class="panel">
+      <p class="note">
+        Angular → gateway FastAPI (<code>ws://localhost:8000/ws</code>) → Kafka
+        topic <code>demo-events</code>.
+      </p>
+      <div class="status-row">
+        <span class="dot" [attr.data-status]="kafkaStatus"></span>
+        <strong>{{ statusLabel(kafkaStatus) }}</strong>
+        <span class="hint">ws://localhost:8000/ws</span>
+      </div>
+      <div class="actions">
+        <button
+          type="button"
+          (click)="connectKafka()"
+          [disabled]="kafkaStatus === 'connected' || kafkaStatus === 'connecting'"
+        >
+          Connecter
+        </button>
+        <button
+          type="button"
+          class="ghost"
+          (click)="disconnectKafka()"
+          [disabled]="kafkaStatus === 'disconnected'"
+        >
+          Déconnecter
+        </button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Publier (Kafka)</h2>
+      <form class="compose" (ngSubmit)="sendKafka()">
+        <input
+          type="text"
+          name="kafkaDraft"
+          [(ngModel)]="kafkaDraft"
+          placeholder="Texte à envoyer sur Kafka…"
+          autocomplete="off"
+        />
+        <button
+          type="submit"
+          [disabled]="kafkaStatus !== 'connected' || !kafkaDraft.trim()"
+        >
+          Envoyer
+        </button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>Messages reçus (gateway)</h2>
+      @if (kafkaMessages.length === 0) {
+        <p class="empty">Aucun message. Connectez-vous et publiez.</p>
+      } @else {
+        <ul class="feed">
+          @for (msg of kafkaMessages; track $index) {
+            <li>
+              <pre>{{ formatJson(msg) }}</pre>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  }
+</main>
