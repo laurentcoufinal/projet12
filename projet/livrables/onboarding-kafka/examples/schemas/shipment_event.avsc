@@ -1,0 +1,15 @@
+{
+  "type": "record",
+  "name": "ShipmentEvent",
+  "namespace": "com.donnelite.logistique",
+  "doc": "Événement logistique pilote — DonnÉlite onboarding",
+  "fields": [
+    { "name": "event_id", "type": "string" },
+    { "name": "event_time", "type": "string", "doc": "ISO-8601" },
+    { "name": "producer", "type": "string" },
+    { "name": "tenant_id", "type": "string" },
+    { "name": "shipment_id", "type": "string" },
+    { "name": "status", "type": "string" },
+    { "name": "weight_kg", "type": ["null", "double"], "default": null }
+  ]
+}
