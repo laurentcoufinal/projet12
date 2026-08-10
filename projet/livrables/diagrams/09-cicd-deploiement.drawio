@@ -1,64 +1,69 @@
-<mxfile host="app.diagrams.net" modified="2026-08-10T08:00:00.000Z" agent="DonnElite" version="22.1.0" type="device">
-  <diagram id="cicd-deploiement" name="CI/CD et déploiement">
-    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
-      <root>
-        <mxCell id="0" />
-        <mxCell id="1" parent="0" />
-        <mxCell id="title" value="Flux CI/CD cible — services, schémas et modèles" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontStyle=1;fontSize=16;" vertex="1" parent="1">
-          <mxGeometry x="40" y="20" width="560" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="code" value="Commit&#xa;service ou schéma" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
-          <mxGeometry x="40" y="160" width="120" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="ci" value="CI&#xa;lint · tests · build" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="220" y="160" width="130" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="registry" value="Gate compat&#xa;Schema Registry&#xa;(BACKWARD)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="410" y="150" width="140" height="90" as="geometry" />
-        </mxCell>
-        <mxCell id="img" value="Image Docker&#xa;standardisée" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
-          <mxGeometry x="610" y="160" width="120" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="staging" value="Staging" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="790" y="160" width="110" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="gates" value="Gates&#xa;OTel + SLA" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="960" y="160" width="120" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="prod" value="Production" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="1140" y="160" width="110" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="mlflow" value="MLflow Registry&#xa;(promotion modèles)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="400" y="320" width="160" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="code" target="ci">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="ci" target="registry">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="registry" target="img">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="img" target="staging">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="staging" target="gates">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="gates" target="prod">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e7" value="artefacts ML" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;" edge="1" parent="1" source="ci" target="mlflow">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e8" value="promote staging" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;" edge="1" parent="1" source="mlflow" target="staging">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="leg" value="Bleu = code/image — Jaune = CI — Vert = gate schémas — Violet = staging — Orange = gates OTel — Rouge = prod / MLflow — Répond R8 / CU3 (AN13, AN14, AF3)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
-          <mxGeometry x="40" y="430" width="1100" height="30" as="geometry" />
-        </mxCell>
-      </root>
-    </mxGraphModel>
-  </diagram>
+<mxfile host="65bd71144e">
+    <diagram id="cicd-deploiement" name="CI/CD et déploiement">
+        <mxGraphModel dx="1686" dy="1129" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="Flux CI/CD cible — services, schémas et modèles" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontStyle=1;fontSize=16;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="20" width="560" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="code" value="Commit&#10;service ou schéma" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="160" width="120" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="ci" value="CI&#10;lint · tests · build" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="220" y="160" width="130" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="registry" value="Gate compat&#10;Schema Registry&#10;(BACKWARD)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="410" y="150" width="140" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="img" value="Image Docker&#10;standardisée" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="610" y="160" width="120" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="staging" value="Staging" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="790" y="160" width="110" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="gates" value="Gates&#10;OTel + SLA" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="960" y="160" width="120" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="prod" value="Production" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="1140" y="160" width="110" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="mlflow" value="MLflow Registry&#10;(promotion modèles)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="320" width="160" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" parent="1" source="code" target="ci" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" parent="1" source="ci" target="registry" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" parent="1" source="registry" target="img" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" parent="1" source="img" target="staging" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" parent="1" source="staging" target="gates" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" parent="1" source="gates" target="prod" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e7" value="artefacts ML" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;" parent="1" source="ci" target="mlflow" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="285" y="270"/>
+                            <mxPoint x="480" y="270"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e8" value="promote staging" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;" parent="1" source="mlflow" target="staging" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg" value="Bleu = code/image — Jaune = CI — Vert = gate schémas — Violet = staging — Orange = gates OTel — Rouge = prod / MLflow — Répond R8 / CU3 (AN13, AN14, AF3)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#666666;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="430" width="1100" height="30" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
 </mxfile>

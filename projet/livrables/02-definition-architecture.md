@@ -579,3 +579,30 @@ Détaillés et testables dans le dossier d’intégration ; résumé :
 L’architecture cible conserve le cœur utile de DonnÉlite (Kafka, Spark, S3, Gateway, backend, frontend) et y ajoute une **colonne vertébrale événementielle gouvernée** (Schema Registry, Connect), un **moteur stream** (Flink), un **serving analytique** (ClickHouse), une **usine ML** (MLflow) et un **socle d’observabilité répartie** (OpenTelemetry, Prometheus, Tempo, Loki, Grafana). Les volets **sécurité** (Auth, Gateway, ACL Kafka, TLS), **continuité d’exploitation** (RTO/RPO, HA, PRA) et **CI/CD** (pipelines, gates schémas/OTel, MLflow) cadrent l’exploitation et la migration. Ce design répond aux risques critiques de l’audit — y compris le monitoring partiel (R7) et la dette de déploiement (R8) — tout en respectant migration progressive, coûts et Green IT.
 
 Prochaine étape opérationnelle : intégrer en premier le socle **Kafka + Schema Registry** (avec métriques de lag branchées sur Grafana) — [03-dossier-integration.md](03-dossier-integration.md).
+
+---
+
+## Annexe A — Glossaire
+
+Termes employés dans ce document. Pour le glossaire transverse, voir [README.md](README.md) ; pour le vocabulaire du SI actuel, voir [01-rapport-audit.md](01-rapport-audit.md) (annexe C).
+
+| Terme | Définition |
+|-------|------------|
+| ACL | Access Control List — contrôles d’accès Kafka limitant les droits par topic et principal |
+| BACKWARD | Compatibilité de schéma : les nouveaux schémas restent lisibles par les consommateurs anciens |
+| Bounded context | Découpage métier du domaine (§2.1) : Acquisition, Plateforme données, Produits analytiques, IA, Exploitation |
+| Bronze / Silver / Gold | Zones medallion du Data Lake : brut → nettoyé → servable |
+| ClickHouse | Base de serving analytique basse latence ; remplace PostgreSQL sur le chemin API critique |
+| CQRS léger | Séparation des écritures / événements et de la lecture analytique (ClickHouse) |
+| Flink | Moteur de traitement quasi temps réel sur Kafka (indicateurs, alertes) |
+| Flux pilote | Premier flux migré REST → Kafka pour valider le socle d’intégration |
+| Kafka Connect | Framework de connecteurs pour intégrer des sources (CDC, fichiers, HTTP) vers Kafka |
+| MLflow | Registry et déploiement versionné des modèles IA vers le scoring |
+| Observabilité répartie | Métriques, traces et logs corrélés via OpenTelemetry sur l’ensemble des services |
+| OTLP | OpenTelemetry Protocol — protocole d’export vers le Collector |
+| PEP | Policy Enforcement Point — point d’application des politiques d’accès (API Gateway) |
+| PRA / HA | Plan de reprise d’activité / haute disponibilité (§8) |
+| RTO / RPO | Recovery Time Objective / Recovery Point Objective — durée max de reprise / perte de données max tolérée |
+| Schema Registry | Service de contrats de schémas (Avro/JSON Schema) pour les topics de production |
+| Serving analytique | Couche de lecture optimisée pour dashboards et API (cible : ClickHouse) |
+| Strangler fig | Migration progressive en encapsulant l’existant ; nouveaux flux via Kafka uniquement |

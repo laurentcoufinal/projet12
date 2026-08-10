@@ -289,3 +289,33 @@ Ces tests contribuent aux critères AF4, AF5 et socle d’intégration du docume
 L’intégration de **Kafka + Schema Registry** est compatible avec l’existant DonnÉlite, à faible lock-in, et constitue le prérequis des vagues Flink / ClickHouse / MLflow. La stratégie strangler limite le risque opérationnel tout en attaquant les causes racines des incohérences et du couplage sync.
 
 **Démarrage immédiat pour les équipes :** suivre [onboarding-kafka/README.md](onboarding-kafka/README.md).
+
+---
+
+## Annexe A — Glossaire
+
+Termes employés dans ce dossier. Pour le glossaire transverse, voir [README.md](README.md) ; architecture cible : [02-definition-architecture.md](02-definition-architecture.md) (annexe A).
+
+| Terme | Définition |
+|-------|------------|
+| ACL | Access Control List — droits Kafka par topic et principal (ouverts en dev ; least privilege en staging/prod) |
+| At-least-once | Garantie de livraison par défaut : un message peut être relu ; compensée par producteurs idempotents et commit d’offset après traitement |
+| Avro | Format de sérialisation binaire recommandé en production, associé au Schema Registry |
+| BACKWARD | Compatibilité de schéma : les nouveaux schémas restent lisibles par les consommateurs anciens (défaut DonnÉlite) |
+| Broker | Nœud du cluster Kafka qui stocke et sert les partitions des topics |
+| Compacted (topic) | Mode de rétention qui conserve la dernière valeur par clé (ex. `_schemas`) |
+| Consumer group | Ensemble de consommateurs partageant la lecture d’un topic ; le lag se mesure par groupe |
+| DLQ | Dead Letter Queue — topic `dlq.<origine>` pour messages non traitables (rétention 14 jours) |
+| Flux pilote | Premier flux migré REST → Kafka pour valider le socle avant généralisation |
+| Lag | Retard de consommation : écart entre le dernier offset produit et celui consommé |
+| Offset | Position d’un message dans une partition ; commit après traitement pour reprise sans perte hors rétention |
+| Partition | Subdivision d’un topic ; la clé (ex. `client_id`) détermine l’ordre par entité métier |
+| Producteur / Consommateur | Applications qui publient ou lisent des messages Kafka (avec sérialiseurs liés au Registry) |
+| Rétention | TTL des messages sur un topic (ex. 7 j bruts, 3 j agrégats) avant expiration |
+| SASL / SCRAM | Authentification Kafka en staging/prod (dev local sans auth) |
+| Schema Registry | Service de contrats de schémas (Avro/JSON Schema) ; topic technique `_schemas` |
+| Shadow traffic | Lecture parallèle ancien chemin REST + Kafka pour comparer les résultats avant bascule |
+| Strangler fig | Migration progressive : nouveaux flux via Kafka ; REST data path déprécié progressivement |
+| Subject | Identifiant de schéma au Registry (`TopicNameStrategy` : `<topic>-value` / `<topic>-key`) |
+| Topic | File de messages nommée (`<domaine>.<entite>.vN`) ; canal canonique des événements |
+| `_schemas` | Topic technique compacté du Schema Registry ; critique à sauvegarder |

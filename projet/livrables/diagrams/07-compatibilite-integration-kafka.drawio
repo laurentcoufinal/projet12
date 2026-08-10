@@ -1,61 +1,90 @@
-<mxfile host="app.diagrams.net" modified="2026-08-10T07:00:00.000Z" agent="DonnElite" version="22.1.0" type="device">
-  <diagram id="compat-kafka" name="Compatibilité intégration Kafka">
-    <mxGraphModel dx="1200" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
-      <root>
-        <mxCell id="0" />
-        <mxCell id="1" parent="0" />
-        <mxCell id="title" value="Compatibilité — SI actuel ↔ Kafka + Schema Registry" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontStyle=1;fontSize=16;" vertex="1" parent="1">
-          <mxGeometry x="40" y="20" width="600" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="existant" value="SI actuel" style="swimlane;fontStyle=1;startSize=30;fillColor=#f5f5f5;strokeColor=#666666;rounded=1;" vertex="1" parent="1">
-          <mxGeometry x="40" y="70" width="520" height="320" as="geometry" />
-        </mxCell>
-        <mxCell id="ingest" value="Ingestion RT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="existant">
-          <mxGeometry x="30" y="50" width="110" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="backend" value="Backend métier" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="existant">
-          <mxGeometry x="30" y="130" width="110" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="spark" value="ETL Spark" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="existant">
-          <mxGeometry x="200" y="50" width="110" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="scoring" value="Scoring" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="existant">
-          <mxGeometry x="200" y="130" width="110" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="lake" value="Data Lake" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="existant">
-          <mxGeometry x="370" y="80" width="110" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="nouveau" value="Socle intégré" style="swimlane;fontStyle=1;startSize=30;fillColor=#e1d5e7;strokeColor=#9673a6;rounded=1;" vertex="1" parent="1">
-          <mxGeometry x="640" y="100" width="280" height="200" as="geometry" />
-        </mxCell>
-        <mxCell id="kafka" value="Kafka" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="nouveau">
-          <mxGeometry x="40" y="50" width="100" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="sr" value="Schema Registry" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="nouveau">
-          <mxGeometry x="40" y="120" width="120" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="e1" value="produce Avro" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="ingest" target="nouveau">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e2" value="produce events" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.45;entryDx=0;entryDy=0;" edge="1" parent="1" source="backend" target="nouveau">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e3" value="consume" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;exitX=0;exitY=0.35;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="nouveau" target="spark">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e4" value="consume" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;exitX=0;exitY=0.55;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="nouveau" target="scoring">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="spark" target="lake">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e6" value="déprécié brut" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;dashed=1;fontSize=10;" edge="1" parent="1" source="scoring" target="lake">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="nouveau" source="kafka" target="sr">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-      </root>
-    </mxGraphModel>
-  </diagram>
+<mxfile host="65bd71144e">
+    <diagram id="compat-kafka" name="Compatibilité intégration Kafka">
+        <mxGraphModel dx="937" dy="627" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="Compatibilité — SI actuel ↔ Kafka + Schema Registry" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontStyle=1;fontSize=16;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="20" width="600" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="existant" value="SI actuel" style="swimlane;fontStyle=1;startSize=30;fillColor=#f5f5f5;strokeColor=#666666;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="60" width="520" height="320" as="geometry"/>
+                </mxCell>
+                <mxCell id="ingest" value="Ingestion RT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="existant" vertex="1">
+                    <mxGeometry x="30" y="60" width="110" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="backend" value="Backend métier" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="existant" vertex="1">
+                    <mxGeometry x="30" y="140" width="110" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="spark" value="ETL Spark" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="existant" vertex="1">
+                    <mxGeometry x="200" y="70" width="110" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="scoring" value="Scoring" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="existant" vertex="1">
+                    <mxGeometry x="200" y="140" width="110" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="lake" value="Data Lake" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#f5f5f5;strokeColor=#666666;" parent="existant" vertex="1">
+                    <mxGeometry x="390" y="90" width="110" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="e3" value="consume" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;" parent="existant" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="600" y="80" as="sourcePoint"/>
+                        <mxPoint x="310" y="80" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="600" y="80"/>
+                            <mxPoint x="310" y="80"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="nouveau" value="Socle intégré" style="swimlane;fontStyle=1;startSize=30;fillColor=#e1d5e7;strokeColor=#9673a6;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="640" y="60" width="280" height="260" as="geometry"/>
+                </mxCell>
+                <mxCell id="kafka" value="Kafka" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" parent="nouveau" vertex="1">
+                    <mxGeometry x="80" y="70" width="100" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="sr" value="Schema Registry" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" parent="nouveau" vertex="1">
+                    <mxGeometry x="80" y="140" width="120" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" parent="nouveau" source="kafka" target="sr" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e1" value="produce Avro" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="ingest" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="640" y="100" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="125" y="100"/>
+                            <mxPoint x="640" y="100"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e2" value="produce events" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="backend" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="640" y="300" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="125" y="300"/>
+                            <mxPoint x="640" y="300"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e4" value="consume" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" target="scoring" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="640" y="280" as="sourcePoint"/>
+                        <Array as="points">
+                            <mxPoint x="640" y="280"/>
+                            <mxPoint x="295" y="280"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" parent="1" source="spark" target="lake" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e6" value="déprécié brut" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;dashed=1;fontSize=10;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="scoring" target="lake" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="485" y="240"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
 </mxfile>

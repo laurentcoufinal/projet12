@@ -401,3 +401,28 @@ La suite de la mission consiste à répondre à ces besoins d’évolution via u
 |------|----------|-----------------|----------------------|
 | #245 | Latence API > 5 s | Surcharge PostgreSQL | Scaling manuel |
 | #312 | Données manquantes dashboard | Erreur pipeline ETL (non confirmée) | Non documenté |
+
+## Annexe C — Glossaire
+
+Termes employés dans ce rapport. Pour le glossaire transverse (architecture cible, intégration), voir [README.md](README.md).
+
+| Terme | Définition |
+|-------|------------|
+| API Gateway | Point d’entrée unifié du SI : routage des requêtes vers les services backend |
+| Batch / ETL (Spark) | Traitement nocturne de nettoyage, enrichissement et agrégation des données (durée moyenne observée : 9 h 15) |
+| C4 | Modèle de description d’architecture (ici : niveau contexte et niveau conteneurs) |
+| Couplage | Dépendance forte entre composants ; un couplage critique lie par ex. le backend à PostgreSQL |
+| Data Lake | Stockage objet S3-compatible des données brutes (et peu gouvernées) |
+| Green IT | Démarche de sobriété numérique : mesure, réduction du footprint et arbitrages écologiques |
+| Ingestion temps réel | Service de collecte d’événements / flux RT vers le broker Kafka |
+| Kafka | Bus de messages (message broker) ; usage partiel dans le SI actuel, coexistant avec des flux REST |
+| MTTD / MTTR | Mean Time To Detect / Mean Time To Repair — délais moyens de détection et de résolution d’incident |
+| MVP | Minimum Viable Product — version initiale retail à partir de laquelle le SI a grandi organiquement |
+| Noisy neighbor | Effet où la charge d’un client ou d’un service dégrade les performances des autres (manque d’isolation) |
+| Observabilité | Capacité à monitorer le SI (métriques, logs, traces) ; ~60 % des services correctement monitorés |
+| P0 / P1 / P2 | Priorités des besoins d’évolution formulés en §9 (P0 = critique) |
+| PostgreSQL analytique | Base relationnelle servant les requêtes API et indicateurs ; point de contention actuel |
+| Scoring (IA) | Service d’inférence de modèles prédictifs (volumes, risques, anomalies) consommant le Data Lake |
+| SLA | Service Level Agreement — engagement contractuel de disponibilité (ex. 99,9 % Enterprise) |
+| Streaming | Traitement quasi continu des données via le broker, par opposition au batch nocturne |
+| Time-to-value | Délai entre le besoin (nouvelle source, cas d’usage) et la disponibilité effective de la donnée |
