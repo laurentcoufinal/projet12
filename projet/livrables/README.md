@@ -29,6 +29,8 @@ Mission Architecture (évolution du SI) — réponses aux besoins du [CDC](../CD
 | BACKWARD | Compatibilité de schéma : nouveaux schémas lisibles par consommateurs anciens |
 | Observabilité répartie | Traces + métriques + logs corrélés via OpenTelemetry sur l’ensemble des services |
 | OTLP | Protocole d’export OpenTelemetry vers le Collector |
+| RTO / RPO | Durée max de reprise / perte de données max tolérée (architecture §8) |
+| PEP | Point d’application des politiques d’accès (API Gateway) |
 
 ## Hypothèses transverses
 
@@ -37,11 +39,12 @@ Mission Architecture (évolution du SI) — réponses aux besoins du [CDC](../CD
 3. Migration sans big-bang ; continuité de service obligatoire.
 4. Premier composant intégré en détail : **Kafka + Schema Registry** (prérequis Flink / ClickHouse / MLflow).
 5. Socle d’observabilité répartie : **OpenTelemetry + Prometheus + Tempo + Loki + Grafana** (dès V0/V1).
+6. Sécurité (Auth/Gateway/ACL), continuité (RTO/RPO) et CI/CD standard cadrés dans l’architecture §7–9.
 
 ## Ordre de lecture recommandé
 
 1. Audit → comprendre limites et besoins  
-2. Architecture → choix et critères d’acceptation  
+2. Architecture → choix, sécurité / continuité / CI/CD (§7–9), critères d’acceptation (§10)  
 3. Intégration + onboarding → mise en œuvre concrète du socle
 
 ## Diagrammes Draw.io
@@ -58,3 +61,4 @@ Mission Architecture (évolution du SI) — réponses aux besoins du [CDC](../CD
 | [diagrams/06-sequence-indicateur-temps-reel.drawio](diagrams/06-sequence-indicateur-temps-reel.drawio) | Séquence indicateur quasi temps réel | Architecture §6.2 |
 | [diagrams/07-compatibilite-integration-kafka.drawio](diagrams/07-compatibilite-integration-kafka.drawio) | Compatibilité SI ↔ Kafka / Schema Registry | Intégration §3.4 |
 | [diagrams/08-observabilite-repartie.drawio](diagrams/08-observabilite-repartie.drawio) | Observabilité répartie (OTel, Prometheus, Tempo, Loki, Grafana) | Architecture §3.4 |
+| [diagrams/09-cicd-deploiement.drawio](diagrams/09-cicd-deploiement.drawio) | Flux CI/CD (services, schémas, MLflow) | Architecture §9.2 |
