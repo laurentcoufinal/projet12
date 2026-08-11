@@ -513,52 +513,76 @@ L’architecture fixe les **pratiques** (CI, gates, Docker standard, MLflow) san
 
 ## 10. Critères d’acceptation
 
-La solution cible est considérée **validée** lorsque les critères suivants sont mesurés et atteints (environnement de staging puis production par vagues).
+La solution cible est considérée **validée** lorsque les critères suivants sont mesurés et atteints (environnement de staging puis production par vagues). Chaque critère est rattaché à un besoin d’évolution de l’audit ([01-rapport-audit.md](01-rapport-audit.md) §9).
+
+### 10.0 Matrice besoins → critères
+
+| Besoin (audit §9) | Priorité | Critères d’acceptation |
+|-------------------|----------|------------------------|
+| Fiabiliser et raccourcir la disponibilité des données analytiques | P0 | AF1, AN3 |
+| Isoler la charge analytique de la charge API (SLA Enterprise) | P0 | AN1, AN2, AN10 |
+| Réduire les chemins de données divergents (une vérité, traçabilité) | P0 | AF4, AF5, AN14, AI1–AI3 |
+| Standardiser l’intégration de nouvelles sources | P1 | AF2 |
+| Découpler le cycle de vie des modèles IA des formats bruts du lake | P1 | AF3, AF6 |
+| Améliorer observabilité et procédures d’incident (MTTD/MTTR) | P1 | AN4, AN7–AN9, AN15 |
+| Politique de rétention, déduplication et zones de qualité | P2 | AN5, AG1, AG2, AG4 |
+| Homogénéiser packaging / déploiement | P2 | AN13 |
+| Préparer le self-service analytics | P2 | AF7 |
+| Disponibilité / performance / migration (NFR §9.2) | NFR | AN1, AN2, AN6, AN11, AN12 |
+| Évolutivité (+12 %/mois) (NFR §9.2) | NFR | AN16 |
+| Maintenabilité / sobriété (NFR §9.2) | NFR | AG3, AN5, AG1–AG2 |
 
 ### 10.1 Critères fonctionnels
 
-| ID | Critère | Mesure | Seuil |
-|----|---------|--------|-------|
-| AF1 | Indicateurs prioritaires quasi temps réel | Délai événement → disponibilité dashboard/API | ≤ 5 minutes (p95) |
-| AF2 | Intégration d’une nouvelle source « standard » | Délai calendaire sans refonte d’architecture | ≤ 5 jours ouvrés (connecteur existant) |
-| AF3 | Déploiement d’une nouvelle version de modèle | Via MLflow jusqu’à scoring en staging | ≤ 1 jour ouvré |
-| AF4 | Dashboard et API sur même indicateur Gold | Écart relatif | &lt; 0,1 % ou égalité bit-à-bit sur jeu de test |
-| AF5 | Traçabilité | Présence schéma + producteur + version modèle sur flux critiques | 100 % des topics prod critiques |
+| ID | Critère | Mesure | Seuil | Besoin |
+|----|---------|--------|-------|--------|
+| AF1 | Indicateurs prioritaires quasi temps réel | Délai événement → disponibilité dashboard/API | ≤ 5 minutes (p95) | P0 fraîcheur |
+| AF2 | Intégration d’une nouvelle source « standard » | Délai calendaire sans refonte d’architecture | ≤ 5 jours ouvrés (connecteur existant) | P1 sources |
+| AF3 | Déploiement d’une nouvelle version de modèle | Via MLflow jusqu’à scoring en staging | ≤ 1 jour ouvré | P1 IA |
+| AF4 | Dashboard et API sur même indicateur Gold | Écart relatif | &lt; 0,1 % ou égalité bit-à-bit sur jeu de test | P0 une vérité |
+| AF5 | Traçabilité | Présence schéma + producteur + version modèle sur flux critiques | 100 % des topics prod critiques | P0 traçabilité |
+| AF6 | Scoring découplé du lake brut | Part des inférences staging/prod via features / topics versionnés (MLflow), hors brut non contractuel | ≥ 95 % | P1 IA |
+| AF7 | Self-service analytics | Domaine métier exploré via BI sur Gold / ClickHouse sans ticket Engineering pour un indicateur catalogue | ≥ 1 domaine livré | P2 self-service |
 
 ### 10.2 Critères non fonctionnels
 
-| ID | Critère | Seuil |
-|----|---------|-------|
-| AN1 | Latence API analytique (p95) hors incident | ≤ 500 ms |
-| AN2 | Disponibilité API analytiques (mensuelle) | ≥ 99,9 % |
-| AN3 | Durée pipeline batch résiduel | ≤ 4 h |
-| AN4 | Taux de services instrumentés OTel (métriques + logs structurés + alerting Grafana) | ≥ 95 % |
-| AN5 | Volume de données dupliquées inutiles | ≤ 10 % (vs ~30 % aujourd’hui) |
-| AN6 | Continuité de service pendant bascules | Aucune interruption non planifiée &gt; RTO convenu (cible 15 min) — §8 |
-| AN7 | Trace distribuée bout-en-bout sur flux pilote (Gateway → Backend → Kafka → consommateur) | Visible dans Tempo pour ≥ 99 % des requêtes test |
-| AN8 | MTTD sur dépassement latence API (alerte Grafana) | ≤ 5 minutes |
-| AN9 | Corrélation log ↔ trace (`trace_id`) sur services critiques | 100 % des services P0 instrumentés |
-| AN10 | Auth + isolation tenant / scopes sur API Enterprise | 100 % des endpoints analytiques exposés |
-| AN11 | TLS en transit (HTTP + Kafka staging/prod) et secrets hors dépôt | Oui (audit config) |
-| AN12 | Backup Schema Registry / topic `_schemas` restauré avec succès en staging | ≥ 1 exercice réussi / trimestre |
-| AN13 | Pipeline CI/CD standard (build + deploy staging) pour services P0 | 100 % des services P0 |
-| AN14 | Compatibilité de schéma BACKWARD vérifiée en CI avant merge prod | 100 % des topics critiques |
+| ID | Critère | Mesure | Seuil | Besoin |
+|----|---------|--------|-------|--------|
+| AN1 | Latence API analytique (p95) hors incident | Latence p95 endpoints analytiques | ≤ 500 ms | P0 SLA |
+| AN2 | Disponibilité API analytiques (mensuelle) | Uptime mensuel mesuré | ≥ 99,9 % | P0 SLA |
+| AN3 | Durée pipeline batch résiduel | Durée bout-en-bout jobs Spark critiques | ≤ 4 h | P0 fraîcheur |
+| AN4 | Services instrumentés OTel | Part services avec métriques + logs structurés + alerting Grafana | ≥ 95 % | P1 observabilité |
+| AN5 | Volume de données dupliquées inutiles | Audit stockage redondant vs utile | ≤ 10 % (vs ~30 % aujourd’hui) | P2 Green IT |
+| AN6 | Continuité de service pendant bascules | Interruption non planifiée max vs RTO (§8) | Aucune &gt; RTO (cible 15 min) | NFR migration |
+| AN7 | Trace distribuée bout-en-bout (flux pilote) | Requêtes test visibles Gateway → Backend → Kafka → consommateur dans Tempo | ≥ 99 % | P1 observabilité |
+| AN8 | MTTD dépassement latence API | Délai alerte Grafana après dépassement seuil | ≤ 5 minutes | P1 observabilité |
+| AN9 | Corrélation log ↔ trace | Champ `trace_id` sur services critiques | 100 % des services P0 instrumentés | P1 observabilité |
+| AN10 | Auth + isolation tenant / scopes | Endpoints analytiques Enterprise protégés | 100 % des endpoints exposés | P0 SLA |
+| AN11 | TLS en transit et secrets hors dépôt | Audit config HTTP + Kafka staging/prod | Oui | NFR sécurité |
+| AN12 | Backup Schema Registry / `_schemas` | Exercice restore réussi en staging | ≥ 1 / trimestre | NFR continuité |
+| AN13 | Pipeline CI/CD standard (services P0) | Build + deploy staging via pipeline unique | 100 % des services P0 | P2 déploiement |
+| AN14 | Compatibilité schéma BACKWARD en CI | Gate Registry avant merge prod | 100 % des topics critiques | P0 une vérité |
+| AN15 | MTTR reconstruction pipeline critique | Durée restore via runbook + automatisation (vs ~3 h audit) | ≤ 45 minutes | P1 observabilité |
+| AN16 | Évolutivité sous croissance volume | Charge simulée +12 % ingestion ; latence API p95 | Reste ≤ 500 ms (AN1) | NFR évolutivité |
 
 ### 10.3 Critères Green IT
 
-| ID | Critère | Seuil |
-|----|---------|-------|
-| AG1 | Politique de rétention documentée et appliquée (lake + topics + Tempo/Loki) | Oui |
-| AG2 | Réduction stockage redondant | −50 % du volume dupliqué identifié sous 12 mois |
-| AG3 | Jobs batch en échec relancés automatiquement (idempotents) | ≥ 90 % sans intervention humaine |
+| ID | Critère | Mesure | Seuil | Besoin |
+|----|---------|--------|-------|--------|
+| AG1 | Politique de rétention documentée et appliquée | Lake + topics + Tempo/Loki conformes à la politique écrite | Oui | P2 rétention |
+| AG2 | Réduction stockage redondant | Volume dupliqué identifié vs baseline | −50 % sous 12 mois | P2 dédup |
+| AG3 | Relance auto jobs batch en échec | Part des relances sans intervention humaine (jobs idempotents) | ≥ 90 % | NFR maintenabilité |
+| AG4 | Zones medallion sur datasets critiques | Datasets serving dashboard/API critiques en zone Gold (contrat + doc) | 100 % | P2 zones |
 
-### 10.4 Critères d’acceptation du socle d’intégration (composant Kafka / Schema Registry)
+### 10.4 Critères d’acceptation du socle d’intégration (Kafka / Schema Registry)
 
-Détaillés et testables dans le dossier d’intégration ; résumé :
+Détaillés et testables dans [03-dossier-integration.md](03-dossier-integration.md) ; critères mesurables ci-dessous.
 
-- Un producteur et un consommateur de référence valident un contrat de schéma en environnement de dev.  
-- Un flux pilote n’utilise plus le contournement REST.  
-- Documentation d’onboarding exécutable sans l’architecte.
+| ID | Critère | Mesure | Seuil | Besoin |
+|----|---------|--------|-------|--------|
+| AI1 | Contrat de schéma en onboarding | Producteur + consommateur de référence + schéma Registry en env. de dev | Smoke tests onboarding OK | P0 chemins divergents |
+| AI2 | Flux pilote sans contournement REST | Flux pilote lit/écrit uniquement via Kafka + schéma | 100 % du chemin data pilote | P0 chemins divergents |
+| AI3 | Onboarding cold start | Nouvel arrivant termine le README d’onboarding sans l’architecte | &lt; 1 heure | P0 socle intégration |
 
 ---
 

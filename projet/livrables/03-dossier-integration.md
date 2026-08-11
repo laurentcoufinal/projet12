@@ -106,7 +106,53 @@ Version Draw.io : [diagrams/07-compatibilite-integration-kafka.drawio](diagrams/
 
 ## 4. Modalités de configuration et d’intégration
 
-### 4.1 Conventions de nommage des topics
+### 4.1 Outillage nécessaire à l’intégration
+
+Périmètre : **Kafka + Schema Registry** uniquement (hors Flink / ClickHouse / MLflow — §1). Guide pas-à-pas : [onboarding-kafka/README.md](onboarding-kafka/README.md).
+
+#### 4.1.1 Matrice de versions compatibles (socle)
+
+| Composant | Version de référence (onboarding) | Compatible / exigé | Notes |
+|-----------|-----------------------------------|--------------------|-------|
+| Apache Kafka | 3.7 (image `bitnami/kafka:3.7`, mode KRaft) | **≥ 3.3** (cluster existant ≥ 3.x) | ZooKeeper legacy toléré si déjà en place ; KRaft recommandé pour les nouveaux déploiements |
+| Schema Registry | image `bitnami/schema-registry` (API Confluent-compatible) | API Confluent Schema Registry **7.x** | `schema.compatibility.level=BACKWARD` ; topic `_schemas` |
+| Sérialisation | Avro 1.11.x (via client) | Avro en prod ; JSON Schema OK en apprentissage | Subjects `TopicNameStrategy` |
+| Docker Engine | — | **≥ 24** | Obligatoire en Dev |
+| Docker Compose | v2 (`docker compose`) | **Compose V2** | Fichier `docker-compose.yml` du kit |
+| Python | 3.10+ | **3.10 – 3.12** | Venv recommandé |
+| Lib client Python | `confluent-kafka[avro]==2.4.0` | **2.3.x – 2.4.x** | Aligner Node.js sur sérialiseurs Confluent équivalents si producteurs JS |
+| `requests` | 2.32.x | 2.31+ | Appels API Registry |
+| Ports locaux | 9092 / 8081 | Libres | Voir `.env.example` |
+
+#### 4.1.2 Logiciels pour les développeurs (Dev)
+
+| Logiciel | Version / contrainte | Usage concret |
+|----------|----------------------|---------------|
+| Docker Engine + Compose V2 | ≥ 24 / V2 | `docker compose up -d` du socle local |
+| Python 3.10+ | 3.10–3.12 | Exécuter `examples/producer.py` / `consumer.py` |
+| pip + venv | stdlib | `pip install -r examples/requirements.txt` |
+| `confluent-kafka[avro]` | 2.4.0 (pin onboarding) | Produce / consume Avro + Registry |
+| Éditeur / IDE | au choix | Éditer `.avsc`, configs `config/` |
+| `curl` (+ `jq` recommandé) | — | Smoke `GET /subjects`, inspection JSON |
+| Git | — | Versionner schémas `.avsc` et configs |
+| Feature flag (outil existant ou config) | — | Double publication REST / Kafka (étape B) |
+
+#### 4.1.3 Logiciels pour l’exploitation (Ops / SRE)
+
+| Logiciel | Version / contrainte | Usage concret |
+|----------|----------------------|---------------|
+| Kafka CLI (`kafka-topics.sh`, `kafka-configs.sh`, …) | image broker 3.7 / cluster ≥ 3.x | Création topics, compacted `_schemas`, ACL |
+| Schema Registry (API HTTP) | Confluent-compatible 7.x | Subjects, compatibilité, backup `_schemas` |
+| SASL/SCRAM ou mTLS | staging / prod (§5.5) | Auth cluster (absent en Dev local) |
+| Prometheus | **2.x** (cible V0 architecture) | Métriques lag, volume, erreurs sérialisation |
+| Grafana | **10.x** (cible V0) | Dashboards lag / DLQ / alertes |
+| OpenTelemetry Collector | **0.9x+** (cible V0) | Collecte OTLP ; corrélation `traceparent` Kafka |
+| Pipeline CI (GitHub Actions, GitLab CI, …) | au choix Engineering | Gate **BACKWARD** avant merge ; build images Docker standard |
+| Backup topic / Registry | script + restore staging | Exercice restore `_schemas` (≥ 1 / trimestre) |
+
+En Dev, l’observabilité reste les **logs Compose** ; Prometheus / Grafana / OTel sont exigés dès **staging** (étape D / §5.5).
+
+### 4.2 Conventions de nommage des topics
 
 ```
 <domaine>.<entite>.<version_majeure>
@@ -123,7 +169,7 @@ Topics techniques :
 - `_schemas` — Schema Registry  
 - `dlq.<topic_origine>` — dead letter  
 
-### 4.2 Politique de schémas
+### 4.3 Politique de schémas
 
 | Paramètre | Valeur DonnÉlite |
 |-----------|------------------|
@@ -132,7 +178,7 @@ Topics techniques :
 | Champs obligatoires événement | `event_id`, `event_time`, `producer`, `tenant_id` |
 | Évolution | Ajout de champs optionnels uniquement sans bump majeur |
 
-### 4.3 Rétention et sobriété (Green IT)
+### 4.4 Rétention et sobriété (Green IT)
 
 | Type de topic | Rétention | Justification |
 |---------------|-----------|---------------|
@@ -141,7 +187,7 @@ Topics techniques :
 | DLQ | 14 jours | Analyse incidents |
 | `_schemas` | Illimitée (compacted) | Contrats critiques |
 
-### 4.4 Étapes d’intégration dans le SI existant
+### 4.5 Étapes d’intégration dans le SI existant
 
 #### Étape A — Préparation cluster
 
@@ -178,7 +224,7 @@ Ces signaux sont exposés vers **Prometheus / Grafana**, dans le cadre du socle 
 
 Dès le flux pilote : propager `traceparent` dans les headers Kafka et corréler les logs scoring / ingestion via `trace_id`.
 
-### 4.5 Paramètres de configuration de référence
+### 4.6 Paramètres de configuration de référence
 
 Fichiers prêts à l’emploi : [onboarding-kafka/config/](onboarding-kafka/config/).
 
@@ -211,7 +257,7 @@ specific.avro.reader=true
 schema.registry.url=http://localhost:8081
 ```
 
-### 4.6 Impacts sur les équipes
+### 4.7 Impacts sur les équipes
 
 | Équipe | Changement |
 |--------|------------|
@@ -245,8 +291,10 @@ Répertoire : [`projet/livrables/onboarding-kafka/`](onboarding-kafka/)
 
 ### 5.3 Prérequis développeur
 
-- Docker et Docker Compose  
-- Python 3.10+  
+Liste complète des outils et versions : **§4.1**.
+
+- Docker Engine ≥ 24 et Docker Compose V2  
+- Python 3.10–3.12  
 - Ports libres : `9092` (Kafka), `8081` (Schema Registry)
 
 ### 5.4 Smoke tests d’acceptation onboarding
